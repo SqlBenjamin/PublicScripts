@@ -7,10 +7,10 @@ GO
 SET NOCOUNT ON;
 GO
 
-IF EXISTS (SELECT job_id FROM msdb.dbo.sysjobs_view WHERE name = N'ECM_Syscommittab_CMSprocCleanup')
+IF EXISTS (SELECT job_id FROM msdb.dbo.sysjobs_view WHERE name = N'Syscommittab_CMSprocCleanup')
 BEGIN
-    EXECUTE msdb.dbo.sp_delete_job @job_name=N'ECM_Syscommittab_CMSprocCleanup', @delete_unused_schedule=1;
-    PRINT 'Job "ECM_Syscommittab_CMSprocCleanup" Deleted.';
+    EXECUTE msdb.dbo.sp_delete_job @job_name=N'Syscommittab_CMSprocCleanup', @delete_unused_schedule=1;
+    PRINT 'Job "Syscommittab_CMSprocCleanup" Deleted.';
 END;
 GO
 
@@ -18,15 +18,15 @@ GO
   Purpose:      This job uses the ConfigMgr sproc "spDiagChangeTracking" to cleanup syscommittab.
 
 Modification History:
-Date            Version    Who             What
+Date            Version    Who                    What
 
-10/23/2018      ?.?        BReynol         Created.
-03/05/2019      7.7        Breynol         Updating drive letter location based on latest 'standards'. Preferred order: D, H?, C.
-03/11/2019      7.7        Breynol         Commented out the H drive check since that isn't the standard; it was only
-                                           discussed as a possible new standard for certain servers. Preferred drives: D then C.
-05/29/2019      7.7        BReynol         Updated delete job portion to print the deletion.
-                                           Some formatting updated; Version added to Modification History.
-                                           (Changes not significant to iterate the version.)
+10/23/2018      ?.?        Benjamin Reynolds      Created.
+03/05/2019      7.7        Benjamin Reynolds      Updating drive letter location based on latest 'standards'. Preferred order: D, H?, C.
+03/11/2019      7.7        Benjamin Reynolds      Commented out the H drive check since that isn't the standard; it was only
+                                                  discussed as a possible new standard for certain servers. Preferred drives: D then C.
+05/29/2019      7.7        Benjamin Reynolds      Updated delete job portion to print the deletion.
+                                                  Some formatting updated; Version added to Modification History.
+                                                  (Changes not significant to iterate the version.)
 ********************************************************************************************/
 
 BEGIN TRANSACTION;
@@ -87,7 +87,7 @@ BEGIN
 END;
 ELSE
 BEGIN
-    PRINT N'CM database Does NOT exist; No need to install "ECM_Syscommittab_CMSprocCleanup" job!';
+    PRINT N'CM database Does NOT exist; No need to install "Syscommittab_CMSprocCleanup" job!';
     GOTO QuitWithRollback;
 END;
 
@@ -106,7 +106,7 @@ END
 ********************************************************************************************/
 DECLARE @jobId binary(16);
 EXECUTE  @ReturnCode = msdb.dbo.sp_add_job 
-         @job_name = N'ECM_Syscommittab_CMSprocCleanup'
+         @job_name = N'Syscommittab_CMSprocCleanup'
         ,@enabled = 1
         ,@notify_level_eventlog = 2
         ,@notify_level_email = 0
@@ -178,13 +178,13 @@ IF (@@ERROR != 0 OR @ReturnCode != 0)
 GOTO QuitWithRollback;
 
 COMMIT TRANSACTION;
-PRINT 'Job "ECM_Syscommittab_CMSprocCleanup" Created.';
+PRINT 'Job "Syscommittab_CMSprocCleanup" Created.';
 GOTO EndSave;
 
 QuitWithRollback:
 IF (@@TRANCOUNT > 0)
 ROLLBACK TRANSACTION;
-PRINT 'Job "ECM_Syscommittab_CMSprocCleanup" NOT CREATED; Transaction Rolledback.';
+PRINT 'Job "Syscommittab_CMSprocCleanup" NOT CREATED; Transaction Rolledback.';
 
 EndSave:
 GO
